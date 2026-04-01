@@ -86,10 +86,10 @@ LEFT_HOME_DEG = [-45, -90, 90, 90, 90, 90]
 RIGHT_HOME_DEG = [-135, -90, -90, 90, -90, 90]
 
 RIGHT_WAIT_DEG = [-125, -62, -130, 180, -90, 80]
-RIGHT_RECEIVE_DEG = [-121, -95, -140, 240, -90, 90]
+RIGHT_RECEIVE_DEG = [-121, -97, -139, 237, -90, 90]
 # [-121, -100, -138, 230, -90, 90]
 # [-121, -100, -138, 238, -90, 90]
-# [-121, -95, -140, 240, -90, 90]
+# [-121, -96, -140, 240, -90, 90]
 # [-121, -100, -140, 240, -90, 90]
 
 LEFT_HOME = full_q_from_arm6(LEFT_HOME_DEG)
@@ -112,6 +112,9 @@ LEFT_GRASP_OFFSET = np.array([0.0, 0.0, 0.20])
 
 LEFT_LIFT_Z = 0.50
 LEFT_TRANSFER_XY = np.array([0.50, 0.00], dtype=np.float64)
+
+LEFT_POST_RELEASE_UP_DZ = 0.05
+LEFT_HOME_TOL = 0.08
 
 GRIP_STEP_HOLD = 20
 SETTLE_STEPS = 20
@@ -201,6 +204,8 @@ left_grasp_target = cyl_start_pos + LEFT_GRASP_OFFSET
 
 left_lift_target = None
 left_transfer_target = None
+left_post_release_up_target = None
+left_home_tcp_target = left_pre_target
 
 print("\n[INFO] Fixed targets")
 print("cyl_start_pos      =", np.round(cyl_start_pos, 4).tolist())
@@ -225,7 +230,9 @@ PHASE_NAMES = {
     6: "RIGHT_MOVE_TO_RECEIVE",
     7: "RIGHT_CLOSE",
     8: "LEFT_RELEASE",
-    9: "DONE",
+    9: "LEFT_POST_RELEASE_UP",
+    10: "LEFT_GO_HOME",
+    11: "DONE",
 }
 
 phase = 0
@@ -377,13 +384,45 @@ for step in range(MAX_STEPS):
 
             if sub_idx >= len(LEFT_OPEN_SEQ):
                 left_grip_cmd = GRIP_OPEN
+
+                left_post_release_up_target = np.array(
+                    [
+                        left_tcp_pos[0],
+                        left_tcp_pos[1],
+                        left_tcp_pos[2] + LEFT_POST_RELEASE_UP_DZ,
+                    ],
+                    dtype=np.float64,
+                )
+
                 phase = 9
-                end_hold = 0
                 print(f"\n[PHASE 9] {PHASE_NAMES[phase]}")
                 print("left_grip_cmd     =", left_grip_cmd)
+                print("left_post_up_tgt  =", np.round(left_post_release_up_target, 4).tolist())
 
     elif phase == 9:
-        left_target = left_transfer_target
+        left_target = left_post_release_up_target
+        left_grip_cmd = GRIP_OPEN
+        right_grip_cmd = RIGHT_GRIP_CLOSE
+
+        if np.linalg.norm(left_tcp_pos - left_target) < 0.03:
+            phase = 10
+            print(f"\n[PHASE 10] {PHASE_NAMES[phase]}")
+            print("left_tcp_pos      =", np.round(left_tcp_pos, 4).tolist())
+            print("left_home_tcp_tgt =", np.round(left_home_tcp_target, 4).tolist())
+
+    elif phase == 10:
+        left_target = left_home_tcp_target
+        left_grip_cmd = GRIP_OPEN
+        right_grip_cmd = RIGHT_GRIP_CLOSE
+
+        if np.linalg.norm(left_tcp_pos - left_target) < LEFT_HOME_TOL:
+            phase = 11
+            end_hold = 0
+            print(f"\n[PHASE 11] {PHASE_NAMES[phase]}")
+            print("left_tcp_pos      =", np.round(left_tcp_pos, 4).tolist())
+
+    elif phase == 11:
+        left_target = left_home_tcp_target
         left_grip_cmd = GRIP_OPEN
         right_grip_cmd = RIGHT_GRIP_CLOSE
 
@@ -400,7 +439,7 @@ for step in range(MAX_STEPS):
     # phase 3(close)만 RMPFlow + grip
     # 나머지 move phase는 raw RMPFlow
     # -------------------------
-    if phase in [0, 1, 2, 4, 5, 6]:
+    if phase in [0, 1, 2, 4, 5, 6, 9, 10]:
         left_action = left_ctrl.forward(
             target_end_effector_position=left_target,
             target_end_effector_orientation=LEFT_TOP_ORI,
@@ -447,6 +486,8 @@ for step in range(MAX_STEPS):
             print("left_lift_target  =", np.round(left_lift_target, 4).tolist())
         if left_transfer_target is not None:
             print("left_transfer_tgt =", np.round(left_transfer_target, 4).tolist())
+        if left_post_release_up_target is not None:
+            print("left_post_up_tgt  =", np.round(left_post_release_up_target, 4).tolist())
 
 
 for _ in range(120):
