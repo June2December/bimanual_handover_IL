@@ -50,6 +50,23 @@ def full_q_from_arm6(arm_deg):
     return np.concatenate([arm6_deg_to_rad(arm_deg), np.zeros(6, dtype=np.float64)])
 
 
+def apply_left_rmp_with_grip(robot, ctrl, target_pos, target_ori, finger_idx, grip_val):
+    action = ctrl.forward(
+        target_end_effector_position=target_pos,
+        target_end_effector_orientation=target_ori,
+    )
+
+    curr = robot.get_joint_positions().copy()
+    full = curr.copy()
+
+    if action.joint_positions is not None:
+        jp = np.array(action.joint_positions, dtype=np.float64)
+        full[:len(jp)] = jp
+
+    full[finger_idx] = grip_val
+    robot.apply_action(ArticulationAction(joint_positions=full))
+
+
 # =========================
 # User setting
 # =========================
@@ -69,7 +86,11 @@ LEFT_HOME_DEG = [-45, -90, 90, 90, 90, 90]
 RIGHT_HOME_DEG = [-135, -90, -90, 90, -90, 90]
 
 RIGHT_WAIT_DEG = [-125, -62, -130, 180, -90, 80]
-RIGHT_RECEIVE_DEG = [-121, -90, -140, 230, -90, 90]
+RIGHT_RECEIVE_DEG = [-121, -95, -140, 240, -90, 90]
+# [-121, -100, -138, 230, -90, 90]
+# [-121, -100, -138, 238, -90, 90]
+# [-121, -95, -140, 240, -90, 90]
+# [-121, -100, -140, 240, -90, 90]
 
 LEFT_HOME = full_q_from_arm6(LEFT_HOME_DEG)
 RIGHT_HOME = full_q_from_arm6(RIGHT_HOME_DEG)
@@ -79,12 +100,12 @@ RIGHT_RECEIVE = arm6_deg_to_rad(RIGHT_RECEIVE_DEG)
 LEFT_TOP_ORI = euler_angles_to_quat(np.array([0.0, np.pi / 2, 0.0]))
 
 GRIP_OPEN = 0.0
-LEFT_GRIP_CLOSE = 0.4
-RIGHT_GRIP_CLOSE = 0.4
+LEFT_GRIP_CLOSE = 0.45
+RIGHT_GRIP_CLOSE = 0.45
 
-LEFT_CLOSE_SEQ = [0.1, 0.2, 0.3, 0.4]
-RIGHT_CLOSE_SEQ = [0.1, 0.2, 0.3, 0.4]
-LEFT_OPEN_SEQ = [0.3, 0.2, 0.1, 0.0]
+LEFT_CLOSE_SEQ = [0.1, 0.2, 0.3, 0.45]
+RIGHT_CLOSE_SEQ = [0.1, 0.2, 0.3, 0.45]
+LEFT_OPEN_SEQ = [0.4, 0.25, 0.1, 0.0]
 
 LEFT_PRE_OFFSET = np.array([0.0, 0.0, 0.50])
 LEFT_GRASP_OFFSET = np.array([0.0, 0.0, 0.20])
@@ -275,7 +296,7 @@ for step in range(MAX_STEPS):
             if sub_idx >= len(LEFT_CLOSE_SEQ):
                 left_grip_cmd = LEFT_GRIP_CLOSE
 
-                # 여기서 1회만 생성
+                # 상대이동 1회 생성: 현재 TCP 기준, z만 0.5로
                 left_lift_target = np.array(
                     [left_tcp_pos[0], left_tcp_pos[1], LEFT_LIFT_Z],
                     dtype=np.float64,
@@ -291,9 +312,12 @@ for step in range(MAX_STEPS):
         left_grip_cmd = LEFT_GRIP_CLOSE
 
         if np.linalg.norm(left_tcp_pos - left_target) < 0.035:
-            # 여기서 1회만 생성
+            # 상대이동 1회 생성: 현재 TCP 기준, XY만 (0.50, 0.00) 쪽으로
+            dx = LEFT_TRANSFER_XY[0] - left_tcp_pos[0]
+            dy = LEFT_TRANSFER_XY[1] - left_tcp_pos[1]
+
             left_transfer_target = np.array(
-                [LEFT_TRANSFER_XY[0], LEFT_TRANSFER_XY[1], left_tcp_pos[2]],
+                [left_tcp_pos[0] + dx, left_tcp_pos[1] + dy, left_tcp_pos[2]],
                 dtype=np.float64,
             )
 
@@ -373,7 +397,8 @@ for step in range(MAX_STEPS):
 
     # -------------------------
     # left arm
-    # move phase: raw RMPFlow 그대로
+    # phase 3(close)만 RMPFlow + grip
+    # 나머지 move phase는 raw RMPFlow
     # -------------------------
     if phase in [0, 1, 2, 4, 5, 6]:
         left_action = left_ctrl.forward(
@@ -382,7 +407,16 @@ for step in range(MAX_STEPS):
         )
         left_robot.apply_action(left_action)
 
-    # grip phase
+    elif phase == 3:
+        apply_left_rmp_with_grip(
+            robot=left_robot,
+            ctrl=left_ctrl,
+            target_pos=left_target,
+            target_ori=LEFT_TOP_ORI,
+            finger_idx=left_finger_idx,
+            grip_val=left_grip_cmd,
+        )
+
     else:
         left_full = left_robot.get_joint_positions().copy()
         left_full[left_finger_idx] = left_grip_cmd
