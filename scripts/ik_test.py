@@ -41,7 +41,7 @@ def get_pos(xform_prim):
 # =========================
 # 사용자 설정
 # =========================
-usd_path = "/home/june/bimanul_ws/bimanual_scene.usd"
+usd_path = "/home/june/bimanual_handover_IL/bimanual_scene.usd"
 
 left_robot_path = "/World/ur_left"
 right_robot_path = "/World/ur_right"
