@@ -12,7 +12,7 @@ from isaacsim.core.utils.types import ArticulationAction
 # =========================================================
 # User setting
 # =========================================================
-USD_PATH = "/home/june/bimanual_handover_IL/bimanual_scene.usd"
+USD_PATH = "/home/june/bimanual_handover_IL/poly_scene.usd"
 
 # 분석할 로봇 하나만 선택
 ROBOT_PRIM_PATH = "/World/ur_right"
