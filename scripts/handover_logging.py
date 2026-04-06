@@ -110,15 +110,15 @@ RIGHT_RECEIVE = arm6_deg_to_rad(RIGHT_RECEIVE_DEG)
 LEFT_TOP_ORI = euler_angles_to_quat(np.array([0.0, np.pi / 2, 0.0]))
 
 GRIP_OPEN = 0.0
-LEFT_GRIP_CLOSE = 0.44
-RIGHT_GRIP_CLOSE = 0.44
+LEFT_GRIP_CLOSE = 0.42
+RIGHT_GRIP_CLOSE = 0.42
 
-LEFT_CLOSE_SEQ = [0.1, 0.2, 0.3, 0.44]
-RIGHT_CLOSE_SEQ = [0.1, 0.2, 0.3, 0.44]
+LEFT_CLOSE_SEQ = [0.1, 0.2, 0.3, 0.4]
+RIGHT_CLOSE_SEQ = [0.1, 0.2, 0.3, 0.4]
 LEFT_OPEN_SEQ = [0.35, 0.25, 0.1, 0.0]
 
 LEFT_PRE_OFFSET = np.array([0.0, 0.0, 0.50])
-LEFT_GRASP_OFFSET = np.array([0.0, 0.0, 0.20])
+LEFT_GRASP_OFFSET = np.array([0.0, 0.0, 0.22])
 
 LEFT_LIFT_Z = 0.50
 LEFT_TRANSFER_XY = np.array([0.50, 0.00], dtype=np.float64)
