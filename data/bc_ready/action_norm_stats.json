@@ -1,0 +1,26 @@
+{
+  "mean": {
+    "action_left_dx": -0.003089580586356324,
+    "action_left_dy": -0.0063646652228503235,
+    "action_left_dz": -0.013973581486241298,
+    "action_right_dx": 0.0030764105995179556,
+    "action_right_dy": 0.0011533445549359973,
+    "action_right_dz": 5.964180280821004e-06
+  },
+  "std": {
+    "action_left_dx": 0.003174375284870725,
+    "action_left_dy": 0.008127707790568496,
+    "action_left_dz": 0.008862262492297842,
+    "action_right_dx": 0.004336417928316394,
+    "action_right_dy": 0.00329002599415722,
+    "action_right_dz": 0.005667736325172058
+  },
+  "columns": [
+    "action_left_dx",
+    "action_left_dy",
+    "action_left_dz",
+    "action_right_dx",
+    "action_right_dy",
+    "action_right_dz"
+  ]
+}

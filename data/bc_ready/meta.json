@@ -1,0 +1,98 @@
+{
+  "config_path": "/home/june/bimanual_handover_IL/configs/bc_columns.json",
+  "input_csv": "/home/june/bimanual_handover_IL/data/merged_raw_success.csv",
+  "output_dir": "/home/june/bimanual_handover_IL/data/bc_ready",
+  "n_rows_total": 34116,
+  "n_episodes_total": 49,
+  "n_rows_train": 27148,
+  "n_rows_val": 3495,
+  "n_rows_test": 3473,
+  "n_episodes_train": 39,
+  "n_episodes_val": 5,
+  "n_episodes_test": 5,
+  "meta_cols": [
+    "episode_id",
+    "original_file",
+    "step",
+    "phase",
+    "phase_name",
+    "episode_success"
+  ],
+  "state_continuous_cols": [
+    "left_tcp_x",
+    "left_tcp_y",
+    "left_tcp_z",
+    "right_tcp_x",
+    "right_tcp_y",
+    "right_tcp_z",
+    "obj_x",
+    "obj_y",
+    "obj_z"
+  ],
+  "state_binary_cols": [
+    "left_grasped",
+    "right_grasped"
+  ],
+  "phase_onehot_cols": [
+    "phase_0",
+    "phase_1",
+    "phase_2",
+    "phase_3",
+    "phase_4",
+    "phase_5",
+    "phase_6",
+    "phase_7",
+    "phase_8",
+    "phase_9",
+    "phase_10",
+    "phase_11"
+  ],
+  "action_continuous_cols": [
+    "action_left_dx",
+    "action_left_dy",
+    "action_left_dz",
+    "action_right_dx",
+    "action_right_dy",
+    "action_right_dz"
+  ],
+  "action_binary_cols": [
+    "action_left_gripper",
+    "action_right_gripper"
+  ],
+  "state_cols_final": [
+    "left_tcp_x",
+    "left_tcp_y",
+    "left_tcp_z",
+    "right_tcp_x",
+    "right_tcp_y",
+    "right_tcp_z",
+    "obj_x",
+    "obj_y",
+    "obj_z",
+    "left_grasped",
+    "right_grasped",
+    "phase_0",
+    "phase_1",
+    "phase_2",
+    "phase_3",
+    "phase_4",
+    "phase_5",
+    "phase_6",
+    "phase_7",
+    "phase_8",
+    "phase_9",
+    "phase_10",
+    "phase_11"
+  ],
+  "action_cols_final": [
+    "action_left_dx",
+    "action_left_dy",
+    "action_left_dz",
+    "action_right_dx",
+    "action_right_dy",
+    "action_right_dz",
+    "action_left_gripper",
+    "action_right_gripper"
+  ],
+  "success_rule": "all rows set to episode_success = 1 because input file is merged_raw_success.csv"
+}

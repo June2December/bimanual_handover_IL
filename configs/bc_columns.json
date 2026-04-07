@@ -1,0 +1,55 @@
+{
+  "meta_cols": [
+    "episode_id",
+    "original_file",
+    "step",
+    "phase",
+    "phase_name",
+    "episode_success"
+  ],
+
+  "state_continuous_cols": [
+    "left_tcp_x", "left_tcp_y", "left_tcp_z",
+    "right_tcp_x", "right_tcp_y", "right_tcp_z",
+    "obj_x", "obj_y", "obj_z"
+  ],
+
+  "state_binary_cols": [
+    "left_grasped",
+    "right_grasped"
+  ],
+
+  "phase_onehot_cols": [
+    "phase_0",
+    "phase_1",
+    "phase_2",
+    "phase_3",
+    "phase_4",
+    "phase_5"
+  ],
+
+  "action_continuous_cols": [
+    "action_left_dx", "action_left_dy", "action_left_dz",
+    "action_right_dx", "action_right_dy", "action_right_dz"
+  ],
+
+  "action_binary_cols": [
+    "action_left_gripper",
+    "action_right_gripper"
+  ],
+
+  "state_cols_final": [
+    "left_tcp_x", "left_tcp_y", "left_tcp_z",
+    "right_tcp_x", "right_tcp_y", "right_tcp_z",
+    "obj_x", "obj_y", "obj_z",
+    "left_grasped", "right_grasped",
+    "phase_0", "phase_1", "phase_2", "phase_3", "phase_4", "phase_5"
+  ],
+
+  "action_cols_final": [
+    "action_left_dx", "action_left_dy", "action_left_dz",
+    "action_right_dx", "action_right_dy", "action_right_dz",
+    "action_left_gripper",
+    "action_right_gripper"
+  ]
+}
