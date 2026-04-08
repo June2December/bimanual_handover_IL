@@ -1,0 +1,57 @@
+{
+  "config": {
+    "batch_size": 256,
+    "num_epochs": 100,
+    "lr": 0.001,
+    "weight_decay": 1e-05,
+    "hidden_dims": [
+      256,
+      256,
+      128
+    ],
+    "dropout_p": 0.1,
+    "lambda_gripper": 1.0,
+    "num_workers": 4,
+    "seed": 42,
+    "patience": 15,
+    "grad_clip_norm": 5.0,
+    "device": "cuda"
+  },
+  "input_dim": 23,
+  "output_dim": 8,
+  "state_cols": [
+    "left_tcp_x",
+    "left_tcp_y",
+    "left_tcp_z",
+    "right_tcp_x",
+    "right_tcp_y",
+    "right_tcp_z",
+    "obj_x",
+    "obj_y",
+    "obj_z",
+    "left_grasped",
+    "right_grasped",
+    "phase_0",
+    "phase_1",
+    "phase_2",
+    "phase_3",
+    "phase_4",
+    "phase_5",
+    "phase_6",
+    "phase_7",
+    "phase_8",
+    "phase_9",
+    "phase_10",
+    "phase_11"
+  ],
+  "action_cols": [
+    "action_left_dx",
+    "action_left_dy",
+    "action_left_dz",
+    "action_right_dx",
+    "action_right_dy",
+    "action_right_dz",
+    "action_left_gripper",
+    "action_right_gripper"
+  ]
+}
